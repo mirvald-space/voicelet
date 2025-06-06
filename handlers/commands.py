@@ -39,16 +39,13 @@ def start_command(update: Update, context: CallbackContext) -> None:
     
     # Send welcome message with formatting
     welcome_message = (
-        f"*🎙 Welcome to Voicelet!*\n\n"
-        f"Hello, {user.first_name}! 👋\n\n"
-        f"I'm your voice recognition assistant that can convert speech to text with automatic language detection.\n\n"
+        f"👋Hello, {user.first_name}! I'm your voice recognition assistant that can convert speech to text with automatic language detection.\n\n"
         f"*✨ Features:*\n"
         f"• 🗣 Voice to text conversion\n"
         f"• 🌍 Automatic language detection\n"
         f"• 🔊 Support for multiple languages\n\n"
         f"*🚀 Get Started:*\n"
         f"Just send me a voice message, and I'll transcribe it for you!\n\n"
-        f"_Developed with ❤️ by @voiceletbot_"
     )
     
     update.message.reply_text(welcome_message, parse_mode=ParseMode.MARKDOWN) 
