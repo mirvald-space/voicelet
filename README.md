@@ -130,11 +130,9 @@ python main.py
 
 > **Note**: More languages can be added by updating the LANGUAGES parameter in your .env file.
 
-## 👨‍💻 Author
 
-<img src="https://github.com/mirvald-space.png" width="80px" style="border-radius: 40px;" alt="Author Avatar">
+<img src="avatar.png" width="80px" style="border-radius: 40px;" alt="Author Avatar">
 
-**Mirvald Space**
 
 [![GitHub](https://img.shields.io/badge/GitHub-mirvald--space-black?style=flat&logo=github)](https://github.com/mirvald-space)
 [![Telegram](https://img.shields.io/badge/Telegram-@your__handle-blue?style=flat&logo=telegram)](https://t.me/voiceletbot)
