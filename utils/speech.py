@@ -1,5 +1,5 @@
 import speech_recognition as sr
-from config import logger, LANGUAGES
+from config import logger, LANGUAGES, ENERGY_THRESHOLD
 
 def detect_language(recognizer, audio_data):
     """
@@ -24,24 +24,26 @@ def detect_language(recognizer, audio_data):
         except sr.RequestError:
             logger.error(f"Could not request results from Google Speech Recognition service for {lang}")
     
-    # If recognized in multiple languages, choose based on result length
-    # (usually the correct language gives a more complete recognition)
+    # Choose the language with the longest recognized text (often the correct one)
     if results:
-        # Choose the language with the longest text result
-        detected_lang = max(results.keys(), key=lambda k: len(results[k]))
-        return detected_lang, results[detected_lang]
+        # Sort by text length, descending
+        sorted_results = sorted(results.items(), key=lambda x: len(x[1]), reverse=True)
+        detected_lang, text = sorted_results[0]
+        return detected_lang, text
     
     return None, None
 
 def prepare_recognizer():
     """
-    Creates and configures a speech recognizer with optimal settings.
+    Prepares a speech recognizer with optimal settings
     
     Returns:
-        sr.Recognizer: Configured speech recognizer
+        Speech recognizer instance
     """
     recognizer = sr.Recognizer()
-    # Increase recognition sensitivity
-    recognizer.energy_threshold = 300
+    recognizer.energy_threshold = ENERGY_THRESHOLD  # Default energy threshold
     recognizer.dynamic_energy_threshold = True
+    recognizer.dynamic_energy_adjustment_damping = 0.15
+    recognizer.dynamic_energy_ratio = 1.5
+    recognizer.pause_threshold = 0.8  # Seconds of non-speaking audio before a phrase is considered complete
     return recognizer 

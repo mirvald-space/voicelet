@@ -1,4 +1,4 @@
-from telegram import Update
+from telegram import Update, ParseMode
 from telegram.ext import CallbackContext
 
 from config import logger
@@ -37,12 +37,18 @@ def start_command(update: Update, context: CallbackContext) -> None:
         
         logger.info(f"User started the bot: {user.first_name} (@{user.username})")
     
-    # Send welcome message
+    # Send welcome message with formatting
     welcome_message = (
-        f"👋 Hello, {user.first_name}!\n\n"
-        f"I'm Voicelet, a voice recognition bot that can convert your voice messages to text "
-        f"with automatic language detection.\n\n"
-        f"Just send me a voice message, and I'll transcribe it for you!"
+        f"*🎙 Welcome to Voicelet!*\n\n"
+        f"Hello, {user.first_name}! 👋\n\n"
+        f"I'm your voice recognition assistant that can convert speech to text with automatic language detection.\n\n"
+        f"*✨ Features:*\n"
+        f"• 🗣 Voice to text conversion\n"
+        f"• 🌍 Automatic language detection\n"
+        f"• 🔊 Support for multiple languages\n\n"
+        f"*🚀 Get Started:*\n"
+        f"Just send me a voice message, and I'll transcribe it for you!\n\n"
+        f"_Developed with ❤️ by @voiceletbot"
     )
     
-    update.message.reply_text(welcome_message) 
+    update.message.reply_text(welcome_message, parse_mode=ParseMode.MARKDOWN) 

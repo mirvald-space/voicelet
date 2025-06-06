@@ -1,6 +1,6 @@
 import os
 from pydub import AudioSegment
-from telegram import Update
+from telegram import Update, ParseMode
 from telegram.ext import CallbackContext
 
 from config import logger, LANGUAGE_NAMES
@@ -26,28 +26,57 @@ def voice_handler(update: Update, context: CallbackContext) -> None:
         audio = audio.normalize()
         audio.export('voice.wav', format='wav')
 
-        # Use speech_recognition for speech recognition
+        # Use speech_recognition for speech to text conversion
         recognizer = prepare_recognizer()
-        
         with sr.AudioFile('voice.wav') as source:
-            # Apply noise reduction
-            recognizer.adjust_for_ambient_noise(source, duration=0.5)
+            # Improve recognition by adjusting for ambient noise
+            recognizer.adjust_for_ambient_noise(source)
             audio_data = recognizer.record(source)
             
-            # Automatic language detection
-            detected_lang, text = detect_language(recognizer, audio_data)
+            # Try to detect language automatically
+            lang, text = detect_language(recognizer, audio_data)
             
-            if detected_lang:
-                lang_name = LANGUAGE_NAMES.get(detected_lang, detected_lang)
-                update.message.reply_text(f'Detected {lang_name} language: {text}')
+            if text:
+                language_name = LANGUAGE_NAMES.get(lang, lang)
+                
+                # Format the response message
+                response = (
+                    f"🎙 *Speech Recognition Results*\n\n"
+                    f"🌍 *Language detected:* {language_name}\n\n"
+                    f"📝 *Transcript:*\n"
+                    f"\"{text}\"\n\n"
+                    f"_Processing time: {update.message.voice.duration}s_"
+                )
+                
+                update.message.reply_text(response, parse_mode=ParseMode.MARKDOWN)
+                logger.info(f"Successfully recognized speech in {language_name}")
             else:
-                update.message.reply_text('Could not recognize speech in any supported language')
+                error_message = (
+                    f"⚠️ *Speech Recognition Failed*\n\n"
+                    f"I couldn't recognize any speech in your audio message. "
+                    f"Please try again with a clearer voice recording, or check the following:\n\n"
+                    f"• Speak clearly and not too quickly\n"
+                    f"• Avoid background noise\n"
+                    f"• Make sure your message contains speech\n"
+                    f"• Try recording a slightly longer message"
+                )
+                update.message.reply_text(error_message, parse_mode=ParseMode.MARKDOWN)
+                logger.warning("Failed to recognize speech - no text detected")
+                
     except Exception as e:
+        error_message = (
+            f"❌ *Error Processing Audio*\n\n"
+            f"Sorry, I encountered a problem while processing your voice message. "
+            f"Please try again later.\n\n"
+            f"_Technical details: {str(e)}_"
+        )
+        update.message.reply_text(error_message, parse_mode=ParseMode.MARKDOWN)
         logger.error(f"Error in voice recognition: {e}")
-        update.message.reply_text('Error in speech recognition')
+        
     finally:
-        # Delete temporary files
-        if os.path.exists('voice.ogg'):
+        # Clean up temporary files
+        try:
             os.remove('voice.ogg')
-        if os.path.exists('voice.wav'):
-            os.remove('voice.wav') 
+            os.remove('voice.wav')
+        except:
+            pass 
