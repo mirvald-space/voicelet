@@ -1,5 +1,7 @@
 import os
 import threading
+import time
+import requests
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
 
@@ -19,6 +21,20 @@ def start_http_server():
     logger.info(f"Starting HTTP server on port {port}")
     httpd.serve_forever()
 
+def keep_alive():
+    """Ping the server every 14 minutes to prevent Render from spinning down due to inactivity"""
+    app_url = os.environ.get('APP_URL', 'https://your-app-url.onrender.com')
+    
+    while True:
+        try:
+            logger.info("Sending keep-alive ping")
+            requests.get(app_url)
+        except Exception as e:
+            logger.error(f"Keep-alive ping failed: {e}")
+        
+        # Sleep for 14 minutes (840 seconds)
+        time.sleep(840)
+
 def main() -> None:
     """
     Main function to start the bot
@@ -27,6 +43,11 @@ def main() -> None:
     server_thread = threading.Thread(target=start_http_server)
     server_thread.daemon = True
     server_thread.start()
+    
+    # Start the keep-alive pinger in a separate thread
+    keep_alive_thread = threading.Thread(target=keep_alive)
+    keep_alive_thread.daemon = True
+    keep_alive_thread.start()
 
     # Create the updater using token from config
     updater = Updater(TELEGRAM_TOKEN)
