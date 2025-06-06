@@ -1,7 +1,7 @@
-from telegram.ext import Updater, MessageHandler, Filters
+from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
 
 from config import TELEGRAM_TOKEN, logger
-from handlers import voice_handler
+from handlers import voice_handler, start_command
 
 def main() -> None:
     """
@@ -12,6 +12,9 @@ def main() -> None:
 
     # Get the dispatcher to register handlers
     dispatcher = updater.dispatcher
+
+    # Register command handlers
+    dispatcher.add_handler(CommandHandler("start", start_command))
 
     # Register voice message handler
     dispatcher.add_handler(MessageHandler(Filters.voice, voice_handler))

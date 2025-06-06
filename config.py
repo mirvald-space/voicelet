@@ -22,6 +22,10 @@ if not TELEGRAM_TOKEN:
 ENERGY_THRESHOLD = int(os.getenv("ENERGY_THRESHOLD", "300"))
 LANGUAGES = os.getenv("LANGUAGES", "ru-RU,en-US").split(",")
 
+# MongoDB configuration
+MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017")
+MONGODB_DB_NAME = os.getenv("MONGODB_DB_NAME", "voicelet_db")
+
 # Language display names
 LANGUAGE_NAMES = {
     'ru-RU': 'Russian',
@@ -30,5 +34,12 @@ LANGUAGE_NAMES = {
     'de-DE': 'German',
     'es-ES': 'Spanish',
     'it-IT': 'Italian',
+    'pt-PT': 'Portuguese',
+    'nl-NL': 'Dutch',
+    'pl-PL': 'Polish',
+    'tr-TR': 'Turkish',
+    'ar-SA': 'Arabic',
+    'zh-CN': 'Chinese',
     'ja-JP': 'Japanese',
+    'ko-KR': 'Korean'
 } 
