@@ -2,4 +2,5 @@ python-telegram-bot==13.7
 SpeechRecognition==3.10.0
 pydub==0.25.1
 python-dotenv==1.0.0
-pymongo==4.13.0 
+pymongo==4.13.0
+ffmpeg-python==0.2.0 

@@ -39,6 +39,11 @@ class Database:
                 "last_activity": None
             }
             
+            # Check if this is a new user to initialize the transcription count
+            existing_user = self.get_user(user_id)
+            if not existing_user:
+                user_data["transcriptions_count"] = 0
+            
             result = self.users.update_one(
                 {"user_id": user_id},
                 {"$set": user_data},
@@ -83,4 +88,53 @@ class Database:
             return list(self.users.find())
         except Exception as e:
             logger.error(f"Error retrieving users from database: {e}")
-            return [] 
+            return []
+            
+    def increment_transcription_count(self, user_id):
+        """
+        Increment the transcription count for a user
+        
+        Args:
+            user_id: Telegram user ID
+            
+        Returns:
+            New transcription count or None if error
+        """
+        try:
+            # If user doesn't exist, create with count 1
+            result = self.users.update_one(
+                {"user_id": user_id},
+                {"$inc": {"transcriptions_count": 1}},
+                upsert=True
+            )
+            
+            # Get the updated user to return the new count
+            updated_user = self.get_user(user_id)
+            if updated_user and "transcriptions_count" in updated_user:
+                new_count = updated_user["transcriptions_count"]
+                logger.info(f"Transcription count incremented for user {user_id}: {new_count}")
+                return new_count
+            return None
+                
+        except Exception as e:
+            logger.error(f"Error incrementing transcription count: {e}")
+            return None
+    
+    def get_transcription_count(self, user_id):
+        """
+        Get the transcription count for a user
+        
+        Args:
+            user_id: Telegram user ID
+            
+        Returns:
+            Transcription count or 0 if not found
+        """
+        try:
+            user = self.get_user(user_id)
+            if user and "transcriptions_count" in user:
+                return user["transcriptions_count"]
+            return 0
+        except Exception as e:
+            logger.error(f"Error getting transcription count: {e}")
+            return 0 

@@ -44,8 +44,14 @@ def start_command(update: Update, context: CallbackContext) -> None:
         f"• 🗣 Voice to text conversion\n"
         f"• 🌍 Automatic language detection\n"
         f"• 🔊 Support for multiple languages\n\n"
+        f"*📁 Supported Audio Formats:*\n"
+        f"• Voice messages (OGG)\n"
+        f"• MP3 files\n"
+        f"• WAV files\n"
+        f"• FLAC files\n\n"
         f"*🚀 Get Started:*\n"
-        f"Just send me a voice message, and I'll transcribe it for you!\n\n"
+        f"• Send me a voice message\n"
+        f"• Or upload an audio file in one of the supported formats\n\n"
     )
     
     update.message.reply_text(welcome_message, parse_mode=ParseMode.MARKDOWN) 

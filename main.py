@@ -6,7 +6,7 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
 
 from config import TELEGRAM_TOKEN, logger
-from handlers import voice_handler, start_command
+from handlers import voice_handler, start_command, file_handler
 
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -60,6 +60,9 @@ def main() -> None:
 
     # Register voice message handler
     dispatcher.add_handler(MessageHandler(Filters.voice, voice_handler))
+    
+    # Register document/file handler for audio files
+    dispatcher.add_handler(MessageHandler(Filters.document, file_handler))
 
     # Start the bot
     logger.info("Starting the bot")
