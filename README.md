@@ -1,58 +1,109 @@
-# Voice Recognition Telegram Bot
+# 🎙️ Voicelet
 
-A Telegram bot that can recognize voice messages and automatically detect the language.
+<div align="center">
 
-## Features
+![Voicelet Banner](https://github.com/mirvald-space/voicelet/assets/banner.png)
 
-- Voice message recognition
-- Automatic language detection (Russian, English, etc.)
-- Voice-to-text conversion
+[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg?style=flat&logo=python&logoColor=white)](https://www.python.org/)
+[![Telegram Bot API](https://img.shields.io/badge/Telegram_Bot_API-v13.7-blue.svg?style=flat&logo=telegram)](https://core.telegram.org/bots/api)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![FFmpeg](https://img.shields.io/badge/FFmpeg-required-red.svg)](https://ffmpeg.org/)
 
-## Requirements
+**A smart Telegram bot that recognizes voice messages with automatic language detection**
+
+[Features](#features) • [Installation](#installation) • [Usage](#usage) • [Configuration](#configuration) • [Project Structure](#project-structure) • [Author](#author)
+
+</div>
+
+---
+
+## ✨ Features
+
+- 🔊 **Voice Message Recognition** — Convert voice messages to text quickly and accurately
+- 🌐 **Automatic Language Detection** — Intelligently identifies the language being spoken
+- 🗣️ **Multi-Language Support** — Works with numerous languages including Russian, English, and more
+- 🔄 **Audio Processing** — Advanced audio normalization for better recognition quality
+
+## 🚀 Installation
+
+### Prerequisites
 
 - Python 3.11+
-- FFmpeg (for audio processing)
+- FFmpeg audio processing library
+- A Telegram Bot Token (from [@BotFather](https://t.me/BotFather))
 
-## Installation
+### Setup
 
-1. Clone the repository:
+1. **Clone the repository**
+
 ```bash
-git clone <repository-url>
-cd <repository-directory>
+git clone https://github.com/mirvald-space/voicelet.git
+cd voicelet
 ```
 
-2. Install dependencies:
+2. **Install dependencies**
+
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Configuration:
-   - Create a `.env` file and configure parameters:
-   ```
-   TELEGRAM_TOKEN=your_telegram_token
-   ENERGY_THRESHOLD=300
-   LANGUAGES=ru-RU,en-US
-   ```
+3. **Install FFmpeg** (if not already installed)
 
-4. Install FFmpeg:
-   - macOS: `brew install ffmpeg`
-   - Linux: `apt-get install ffmpeg`
-   - Windows: [Download from official website](https://ffmpeg.org/download.html)
+<details>
+<summary>Installation Instructions by OS</summary>
 
-## Usage
+**macOS:**
+```bash
+brew install ffmpeg
+```
 
-1. Start the bot:
+**Ubuntu/Debian:**
+```bash
+sudo apt update
+sudo apt install ffmpeg
+```
+
+**Windows:**  
+Download from [FFmpeg official website](https://ffmpeg.org/download.html)
+</details>
+
+4. **Configure environment**
+
+Create a `.env` file in the project root:
+
+```
+TELEGRAM_TOKEN=your_telegram_bot_token_here
+ENERGY_THRESHOLD=300
+LANGUAGES=ru-RU,en-US
+```
+
+## 💡 Usage
+
+1. **Start the bot**
+
 ```bash
 python main.py
 ```
 
-2. Send a voice message to the bot in Telegram
+2. **Interact with your bot on Telegram**
 
-## Project Structure
+- Send a voice message to your bot
+- The bot will respond with the detected language and transcribed text
+- Supports multiple languages - just speak naturally!
+
+## ⚙️ Configuration
+
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `TELEGRAM_TOKEN` | Your Telegram bot token from BotFather | *Required* |
+| `ENERGY_THRESHOLD` | Sensitivity threshold for speech recognition | 300 |
+| `LANGUAGES` | Comma-separated list of language codes to detect | ru-RU,en-US |
+
+## 🗄️ Project Structure
 
 ```
 .
-├── main.py             # Main entry point for the bot
+├── main.py             # Entry point for the bot
 ├── config.py           # Configuration and settings
 ├── handlers/           # Message handlers
 │   ├── __init__.py     # Handler package initialization
@@ -60,23 +111,41 @@ python main.py
 ├── utils/              # Utility functions
 │   ├── __init__.py     # Utils package initialization
 │   └── speech.py       # Speech recognition functions
-├── .env                # Environment variables file
+├── .env                # Environment variables file (create this)
 ├── .gitignore          # Git ignore rules
 └── README.md           # Project documentation
 ```
 
-## Configuration Parameters
+## 🗣️ Supported Languages
 
-- `TELEGRAM_TOKEN`: Your Telegram bot token (get from [@BotFather](https://t.me/BotFather))
-- `ENERGY_THRESHOLD`: Sensitivity threshold for speech recognition (default 300)
-- `LANGUAGES`: List of languages for auto-detection (comma-separated)
+| Language | Code |
+|----------|------|
+| English  | en-US |
+| Russian  | ru-RU |
+| French   | fr-FR |
+| German   | de-DE |
+| Spanish  | es-ES |
+| Italian  | it-IT |
+| Japanese | ja-JP |
 
-## Supported Languages
+> **Note**: More languages can be added by updating the LANGUAGES parameter in your .env file.
 
-- Russian (ru-RU)
-- English (en-US)
-- Other languages can be added in the settings file
+## 👨‍💻 Author
 
-## License
+<img src="https://github.com/mirvald-space.png" width="80px" style="border-radius: 40px;" alt="Author Avatar">
 
-MIT 
+**Mirvald Space**
+
+[![GitHub](https://img.shields.io/badge/GitHub-mirvald--space-black?style=flat&logo=github)](https://github.com/mirvald-space)
+[![Telegram](https://img.shields.io/badge/Telegram-@your__handle-blue?style=flat&logo=telegram)](https://t.me/your_handle)
+
+## 📜 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+<div align="center">
+<p>If you find this project useful, please consider giving it a ⭐️</p>
+<p>Made with ❤️ and Python</p>
+</div> 
