@@ -1,0 +1,40 @@
+# Virtual Environment
+.myenv/
+venv/
+env/
+*.pyc
+
+# Environment variables
+.env
+
+# IDE files
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# Cache files
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Temporary files
+*.log
+*.tmp
+voice.ogg
+voice.wav
+*.swp
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# macOS
+.DS_Store 
