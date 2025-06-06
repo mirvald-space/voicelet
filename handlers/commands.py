@@ -48,7 +48,7 @@ def start_command(update: Update, context: CallbackContext) -> None:
         f"• 🔊 Support for multiple languages\n\n"
         f"*🚀 Get Started:*\n"
         f"Just send me a voice message, and I'll transcribe it for you!\n\n"
-        f"_Developed with ❤️ by @voiceletbot"
+        f"_Developed with ❤️ by @voiceletbot_"
     )
     
     update.message.reply_text(welcome_message, parse_mode=ParseMode.MARKDOWN) 
