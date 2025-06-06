@@ -39,19 +39,9 @@ def start_command(update: Update, context: CallbackContext) -> None:
     
     # Send welcome message with formatting
     welcome_message = (
-        f"👋Hello, {user.first_name}! I'm your voice recognition assistant that can convert speech to text with automatic language detection.\n\n"
-        f"*✨ Features:*\n"
-        f"• 🗣 Voice to text conversion\n"
-        f"• 🌍 Automatic language detection\n"
-        f"• 🔊 Support for multiple languages\n\n"
-        f"*📁 Supported Audio Formats:*\n"
-        f"• Voice messages (OGG)\n"
-        f"• MP3 files\n"
-        f"• WAV files\n"
-        f"• FLAC files\n\n"
-        f"*🚀 Get Started:*\n"
-        f"• Send me a voice message\n"
-        f"• Or upload an audio file in one of the supported formats\n\n"
+        f"👋 Hello, {user.first_name}! I'm your voice recognition assistant.\n\n"
+        f"Simply send me a voice message or audio file (OGG, MP3, WAV, FLAC) and I'll convert it to text with automatic language detection.\n\n"
+        f"Check out my other bot @Vidzillabot for downloading videos from social networks!"
     )
     
     update.message.reply_text(welcome_message, parse_mode=ParseMode.MARKDOWN) 
