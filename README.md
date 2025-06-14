@@ -1,3 +1,5 @@
+[English](README.md) | [Русский](README.ru.md) | [Українська](README.uk.md)
+
 # 🎙️ Voicelet
 
 <div align="center">
