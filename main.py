@@ -32,8 +32,8 @@ def keep_alive():
         except Exception as e:
             logger.error(f"Keep-alive ping failed: {e}")
         
-        # Sleep for 14 minutes (840 seconds)
-        time.sleep(840)
+        # Sleep for 1 hour (3600 seconds)
+        time.sleep(3600)
 
 def main() -> None:
     """
