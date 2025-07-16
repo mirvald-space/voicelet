@@ -4,3 +4,4 @@ pydub
 python-dotenv
 pymongo
 ffmpeg-python
+requests
