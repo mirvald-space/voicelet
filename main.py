@@ -3,7 +3,7 @@ import threading
 import time
 import requests
 from http.server import HTTPServer, BaseHTTPRequestHandler
-from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
+from telegram.ext import Updater, MessageHandler, CommandHandler, filters
 
 from config import TELEGRAM_TOKEN, logger
 from handlers import voice_handler, start_command, file_handler
@@ -59,10 +59,10 @@ def main() -> None:
     dispatcher.add_handler(CommandHandler("start", start_command))
 
     # Register voice message handler
-    dispatcher.add_handler(MessageHandler(Filters.voice, voice_handler))
+    dispatcher.add_handler(MessageHandler(filters.VOICE, voice_handler))
     
     # Register document/file handler for audio files
-    dispatcher.add_handler(MessageHandler(Filters.document, file_handler))
+    dispatcher.add_handler(MessageHandler(filters.DOCUMENT, file_handler))
 
     # Start the bot
     logger.info("Starting the bot")
