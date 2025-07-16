@@ -1,5 +1,4 @@
-from telegram import Update, ParseMode
-from telegram.ext import CallbackContext
+from aiogram import types
 
 from config import logger
 from utils.database import Database
@@ -7,15 +6,14 @@ from utils.database import Database
 # Initialize database connection
 db = Database()
 
-def start_command(update: Update, context: CallbackContext) -> None:
+async def start_command(message: types.Message) -> None:
     """
     Handle the /start command
     
     Args:
-        update: Telegram update object
-        context: Callback context
+        message: Message object from aiogram
     """
-    user = update.effective_user
+    user = message.from_user
     
     # Store user in database
     if user:
@@ -44,4 +42,4 @@ def start_command(update: Update, context: CallbackContext) -> None:
         f"Check out my other bot @Vidzillabot for downloading videos from social networks!"
     )
     
-    update.message.reply_text(welcome_message, parse_mode=ParseMode.MARKDOWN) 
+    await message.reply(welcome_message, parse_mode="Markdown") 

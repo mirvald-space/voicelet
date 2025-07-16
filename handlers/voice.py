@@ -1,8 +1,7 @@
 import os
 import uuid
 from pydub import AudioSegment
-from telegram import Update, ParseMode
-from telegram.ext import CallbackContext
+from aiogram import types
 
 from config import logger, LANGUAGE_NAMES
 from utils.speech import detect_language, prepare_recognizer
@@ -12,13 +11,12 @@ import speech_recognition as sr
 # Initialize database
 db = Database()
 
-def voice_handler(update: Update, context: CallbackContext) -> None:
+async def voice_handler(message: types.Message) -> None:
     """
     Handles voice messages by converting them to text using speech recognition.
     
     Args:
-        update: Telegram update object
-        context: Callback context
+        message: Message object from aiogram
     """
     # Generate unique file identifiers for concurrent processing
     file_id = str(uuid.uuid4())
@@ -26,17 +24,19 @@ def voice_handler(update: Update, context: CallbackContext) -> None:
     temp_wav_path = f'temp_voice_{file_id}.wav'
     
     # Send a message to inform the user that processing is underway
-    processing_message = update.message.reply_text(
+    processing_message = await message.reply(
         "🔄 *Processing voice message...*\n\n"
         "Please wait. Transcription may take some time.",
-        parse_mode=ParseMode.MARKDOWN
+        parse_mode="Markdown"
     )
     
-    # Get the voice message file
-    file = update.message.voice.get_file()
-    file.download(temp_ogg_path)
-
     try:
+        # Get the voice message file
+        await message.bot.download(
+            message.voice,
+            destination=temp_ogg_path
+        )
+
         # Convert OGG to WAV
         audio = AudioSegment.from_ogg(temp_ogg_path)
         # Normalize audio for better quality
@@ -55,7 +55,7 @@ def voice_handler(update: Update, context: CallbackContext) -> None:
             
             if text:
                 # Increment transcription count for this user
-                user_id = update.effective_user.id
+                user_id = message.from_user.id
                 new_count = db.increment_transcription_count(user_id)
                 
                 language_name = LANGUAGE_NAMES.get(lang, lang)
@@ -66,14 +66,14 @@ def voice_handler(update: Update, context: CallbackContext) -> None:
                     f"🌍 *Language detected:* {language_name}\n\n"
                     f"📝 *Transcript:*\n"
                     f"\"{text}\"\n\n"
-                    f"_Audio duration: {update.message.voice.duration}s_\n"
+                    f"_Audio duration: {message.voice.duration}s_\n"
                     f"_Your transcription count: {new_count}_"
                 )
                 
                 # Delete the processing message and send the result
-                processing_message.delete()
-                update.message.reply_text(response, parse_mode=ParseMode.MARKDOWN)
-                logger.info(f"Successfully recognized speech in {language_name} for user {update.effective_user.id}")
+                await message.bot.delete_message(chat_id=message.chat.id, message_id=processing_message.message_id)
+                await message.reply(response, parse_mode="Markdown")
+                logger.info(f"Successfully recognized speech in {language_name} for user {message.from_user.id}")
             else:
                 error_message = (
                     f"⚠️ *Speech Recognition Failed*\n\n"
@@ -86,9 +86,9 @@ def voice_handler(update: Update, context: CallbackContext) -> None:
                     f"• You can also try sending an audio file instead"
                 )
                 # Delete the processing message and send the error
-                processing_message.delete()
-                update.message.reply_text(error_message, parse_mode=ParseMode.MARKDOWN)
-                logger.warning(f"Failed to recognize speech - no text detected for user {update.effective_user.id}")
+                await message.bot.delete_message(chat_id=message.chat.id, message_id=processing_message.message_id)
+                await message.reply(error_message, parse_mode="Markdown")
+                logger.warning(f"Failed to recognize speech - no text detected for user {message.from_user.id}")
                 
     except Exception as e:
         error_message = (
@@ -99,11 +99,11 @@ def voice_handler(update: Update, context: CallbackContext) -> None:
         )
         # Try to delete the processing message if it exists and send the error
         try:
-            processing_message.delete()
+            await message.bot.delete_message(chat_id=message.chat.id, message_id=processing_message.message_id)
         except:
             pass
-        update.message.reply_text(error_message, parse_mode=ParseMode.MARKDOWN)
-        logger.error(f"Error in voice recognition for user {update.effective_user.id}: {e}")
+        await message.reply(error_message, parse_mode="Markdown")
+        logger.error(f"Error in voice recognition for user {message.from_user.id}: {e}")
         
     finally:
         # Clean up temporary files
@@ -111,4 +111,4 @@ def voice_handler(update: Update, context: CallbackContext) -> None:
             os.remove(temp_ogg_path)
             os.remove(temp_wav_path)
         except Exception as e:
-            logger.error(f"Error cleaning up temporary files for user {update.effective_user.id}: {e}") 
+            logger.error(f"Error cleaning up temporary files for user {message.from_user.id}: {e}") 

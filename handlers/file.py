@@ -2,8 +2,7 @@ import os
 import uuid
 import mimetypes
 from pydub import AudioSegment
-from telegram import Update, ParseMode
-from telegram.ext import CallbackContext
+from aiogram import types
 
 from config import logger, LANGUAGE_NAMES
 from utils.speech import detect_language, prepare_recognizer
@@ -16,34 +15,33 @@ SUPPORTED_FORMATS = ['.ogg', '.flac', '.wav', '.mp3']
 # Initialize database
 db = Database()
 
-def file_handler(update: Update, context: CallbackContext) -> None:
+async def file_handler(message: types.Message) -> None:
     """
     Handles audio file messages by converting them to text using speech recognition.
     Supports .ogg, .flac, .wav, and .mp3 formats.
     
     Args:
-        update: Telegram update object
-        context: Callback context
+        message: Message object from aiogram
     """
     # Check if the message contains a document
-    if not update.message.document:
+    if not message.document:
         return
     
     # Get file information
-    file = update.message.document
+    file = message.document
     file_name = file.file_name if file.file_name else "audio"
     file_ext = os.path.splitext(file_name)[1].lower()
     
     # Check if the file is a supported audio format
     if file_ext not in SUPPORTED_FORMATS:
-        update.message.reply_text(
+        await message.reply(
             f"❌ *Unsupported File Format*\n\n"
             f"This file format is not supported. Please send an audio file in one of the following formats:\n"
             f"• .ogg (Voice Message)\n"
             f"• .flac\n"
             f"• .wav\n"
             f"• .mp3",
-            parse_mode=ParseMode.MARKDOWN
+            parse_mode="Markdown"
         )
         return
     
@@ -53,17 +51,19 @@ def file_handler(update: Update, context: CallbackContext) -> None:
     temp_wav_path = f'temp_audio_{file_id}.wav'
     
     # Send a message to inform the user that processing is underway
-    processing_message = update.message.reply_text(
+    processing_message = await message.reply(
         "🔄 *Processing audio file...*\n\n"
         "Please wait. Transcription may take some time.",
-        parse_mode=ParseMode.MARKDOWN
+        parse_mode="Markdown"
     )
     
-    # Download the file
-    audio_file = file.get_file()
-    audio_file.download(temp_audio_path)
-    
     try:
+        # Download the file
+        await message.bot.download(
+            message.document,
+            destination=temp_audio_path
+        )
+        
         # Convert to WAV for processing
         if file_ext == '.mp3':
             audio = AudioSegment.from_mp3(temp_audio_path)
@@ -90,7 +90,7 @@ def file_handler(update: Update, context: CallbackContext) -> None:
             
             if text:
                 # Increment transcription count for this user
-                user_id = update.effective_user.id
+                user_id = message.from_user.id
                 new_count = db.increment_transcription_count(user_id)
                 
                 language_name = LANGUAGE_NAMES.get(lang, lang)
@@ -106,9 +106,9 @@ def file_handler(update: Update, context: CallbackContext) -> None:
                 )
                 
                 # Delete the processing message and send the result
-                processing_message.delete()
-                update.message.reply_text(response, parse_mode=ParseMode.MARKDOWN)
-                logger.info(f"Successfully recognized speech in {language_name} from {file_ext} file for user {update.effective_user.id}")
+                await message.bot.delete_message(chat_id=message.chat.id, message_id=processing_message.message_id)
+                await message.reply(response, parse_mode="Markdown")
+                logger.info(f"Successfully recognized speech in {language_name} from {file_ext} file for user {message.from_user.id}")
             else:
                 error_message = (
                     f"⚠️ *Speech Recognition Failed*\n\n"
@@ -120,9 +120,9 @@ def file_handler(update: Update, context: CallbackContext) -> None:
                     f"• Make sure the audio is not too short"
                 )
                 # Delete the processing message and send the error
-                processing_message.delete()
-                update.message.reply_text(error_message, parse_mode=ParseMode.MARKDOWN)
-                logger.warning(f"Failed to recognize speech in {file_ext} file - no text detected for user {update.effective_user.id}")
+                await message.bot.delete_message(chat_id=message.chat.id, message_id=processing_message.message_id)
+                await message.reply(error_message, parse_mode="Markdown")
+                logger.warning(f"Failed to recognize speech in {file_ext} file - no text detected for user {message.from_user.id}")
                 
     except Exception as e:
         error_message = (
@@ -133,11 +133,11 @@ def file_handler(update: Update, context: CallbackContext) -> None:
         )
         # Try to delete the processing message if it exists and send the error
         try:
-            processing_message.delete()
+            await message.bot.delete_message(chat_id=message.chat.id, message_id=processing_message.message_id)
         except:
             pass
-        update.message.reply_text(error_message, parse_mode=ParseMode.MARKDOWN)
-        logger.error(f"Error in audio file recognition for user {update.effective_user.id}: {e}")
+        await message.reply(error_message, parse_mode="Markdown")
+        logger.error(f"Error in audio file recognition for user {message.from_user.id}: {e}")
         
     finally:
         # Clean up temporary files
@@ -145,4 +145,4 @@ def file_handler(update: Update, context: CallbackContext) -> None:
             os.remove(temp_audio_path)
             os.remove(temp_wav_path)
         except Exception as e:
-            logger.error(f"Error cleaning up temporary files for user {update.effective_user.id}: {e}") 
+            logger.error(f"Error cleaning up temporary files for user {message.from_user.id}: {e}") 

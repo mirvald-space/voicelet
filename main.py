@@ -2,11 +2,17 @@ import os
 import threading
 import time
 import requests
+import logging
+import asyncio
 from http.server import HTTPServer, BaseHTTPRequestHandler
-from telegram.ext import Updater, MessageHandler, CommandHandler, filters
+from aiogram import Bot, Dispatcher, types
+from aiogram.types import ContentType
+from aiogram.filters import Command, CommandStart
 
 from config import TELEGRAM_TOKEN, logger
-from handlers import voice_handler, start_command, file_handler
+from handlers.voice import voice_handler
+from handlers.commands import start_command
+from handlers.file import file_handler
 
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -35,7 +41,19 @@ def keep_alive():
         # Sleep for 1 hour (3600 seconds)
         time.sleep(3600)
 
-def main() -> None:
+async def handle_start(message: types.Message):
+    """Handler for /start command"""
+    await start_command(message)
+
+async def handle_voice(message: types.Message):
+    """Handler for voice messages"""
+    await voice_handler(message)
+
+async def handle_file(message: types.Message):
+    """Handler for document/file messages"""
+    await file_handler(message)
+
+async def main() -> None:
     """
     Main function to start the bot
     """
@@ -49,25 +67,22 @@ def main() -> None:
     keep_alive_thread.daemon = True
     keep_alive_thread.start()
 
-    # Create the updater using token from config
-    updater = Updater(TELEGRAM_TOKEN)
-
-    # Get the dispatcher to register handlers
-    dispatcher = updater.dispatcher
+    # Initialize bot and dispatcher
+    bot = Bot(token=TELEGRAM_TOKEN)
+    dp = Dispatcher()
 
     # Register command handlers
-    dispatcher.add_handler(CommandHandler("start", start_command))
+    dp.message.register(handle_start, Command(commands=["start"]))
 
     # Register voice message handler
-    dispatcher.add_handler(MessageHandler(filters.VOICE, voice_handler))
+    dp.message.register(handle_voice, lambda message: message.content_type == ContentType.VOICE)
     
     # Register document/file handler for audio files
-    dispatcher.add_handler(MessageHandler(filters.DOCUMENT, file_handler))
+    dp.message.register(handle_file, lambda message: message.content_type == ContentType.DOCUMENT)
 
     # Start the bot
     logger.info("Starting the bot")
-    updater.start_polling()
-    updater.idle()
+    await dp.start_polling(bot)
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())
