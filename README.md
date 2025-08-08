@@ -4,7 +4,7 @@
 
 <div align="center">
 
-![Voicelet Banner](/cover.png)
+![Voicelet Banner](assets/cover.png)
 
 [![Python](https://img.shields.io/badge/Python-3.11+-blue.svg?style=flat&logo=python&logoColor=white)](https://www.python.org/)
 [![Telegram Bot API](https://img.shields.io/badge/Telegram_Bot_API-v13.7-blue.svg?style=flat&logo=telegram)](https://core.telegram.org/bots/api)
