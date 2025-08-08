@@ -130,8 +130,8 @@ python main.py
 
 > **Примечание**: Можно добавить больше языков, обновив параметр LANGUAGES в файле .env.
 
-[![GitHub](https://img.shields.io/badge/GitHub-mirvald--space-black?style=flat&logo=github)](https://github.com/mirvald-space)
-[![Telegram](https://img.shields.io/badge/Telegram-@your__handle-blue?style=flat&logo=telegram)](https://t.me/voiceletbot)
+[![GitHub](https://img.shields.io/badge/GitHub-mirvald--space-black?style=flat&logo=github)](https://github.com/zerox9dev)
+[![Telegram](https://img.shields.io/badge/Telegram-@voiceletbotle-blue?style=flat&logo=telegram)](https://t.me/voiceletbot)
 
 ## 📜 Лицензия
 
