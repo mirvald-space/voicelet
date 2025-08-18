@@ -19,7 +19,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(b'Telegram Bot is running!')
 
 def start_http_server():
-    port = int(os.environ.get('PORT', 8080))
+    port = int(os.environ.get('PORT', 3000))
     httpd = HTTPServer(('0.0.0.0', port), SimpleHTTPRequestHandler)
     logger.info(f"Starting HTTP server on port {port}")
     httpd.serve_forever()

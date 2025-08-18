@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  telegram-bot:
+    build: .
+    container_name: telegram-voice-bot
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+    env_file:
+      - .env
+    volumes:
+      # Монтируем директорию для временных файлов (если нужно)
+      - ./temp:/app/temp
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

@@ -28,11 +28,44 @@
 
 ### Необходимое ПО
 
-- Python 3.11+
-- Библиотека для обработки аудио FFmpeg
+- Docker и Docker Compose (рекомендуется) ИЛИ
+- Python 3.11+ и FFmpeg (для локальной установки)
 - Токен Telegram-бота (получить у [@BotFather](https://t.me/BotFather))
 
-### Установка
+### 🐳 Быстрый запуск с Docker (рекомендуется)
+
+1. **Клонируйте репозиторий**
+
+```bash
+git clone https://github.com/mirvald-space/voicelet.git
+cd voicelet
+```
+
+2. **Настройте окружение**
+
+Создайте файл `.env` в корне проекта:
+
+```
+TELEGRAM_TOKEN=your_telegram_bot_token_here
+ENERGY_THRESHOLD=300
+LANGUAGES=ru-RU,en-US
+MONGODB_URI=your_mongodb_connection_string
+```
+
+3. **Запустите бота одной командой**
+
+```bash
+# Используйте готовый скрипт
+./docker-run.sh
+
+# Или вручную через docker-compose
+docker-compose up -d
+```
+
+### 🐍 Локальная установка
+
+<details>
+<summary>Если предпочитаете запуск без Docker</summary>
 
 1. **Клонируйте репозиторий**
 
@@ -47,10 +80,7 @@ cd voicelet
 pip install -r requirements.txt
 ```
 
-3. **Установите FFmpeg** (если ещё не установлен)
-
-<details>
-<summary>Инструкции по установке для разных ОС</summary>
+3. **Установите FFmpeg**
 
 **macOS:**
 ```bash
@@ -65,7 +95,6 @@ sudo apt install ffmpeg
 
 **Windows:**  
 Скачайте с [официального сайта FFmpeg](https://ffmpeg.org/download.html)
-</details>
 
 4. **Настройте окружение**
 
@@ -75,11 +104,33 @@ sudo apt install ffmpeg
 TELEGRAM_TOKEN=your_telegram_bot_token_here
 ENERGY_THRESHOLD=300
 LANGUAGES=ru-RU,en-US
+MONGODB_URI=your_mongodb_connection_string
 ```
+
+</details>
 
 ## 💡 Использование
 
-1. **Запустите бота**
+### С Docker
+
+```bash
+# Быстрый запуск
+./docker-run.sh
+
+# Или используйте Makefile для удобства
+make up          # Запустить бота
+make logs        # Просмотр логов
+make down        # Остановить бота
+make restart     # Перезапустить
+make clean       # Очистить всё
+
+# Или напрямую через docker-compose
+docker-compose up -d
+docker-compose logs -f
+docker-compose down
+```
+
+### Локально
 
 ```bash
 python main.py
